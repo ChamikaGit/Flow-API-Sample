@@ -7,6 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
@@ -19,28 +20,28 @@ class MainViewModel : ViewModel() {
     }
 
     init {
-        backPressureDemo4()
+        mapOperatorDemo()
     }
 
 
-    private fun backPressureDemo(){
+    private fun backPressureDemo() {
         //Normal-Way
-        val myFlow1 = flow<Int>{
+        val myFlow1 = flow<Int> {
 
-            for (i in 1..10){
+            for (i in 1..10) {
                 Log.e("MYTAG", "producer: $i")
                 emit(i)
                 delay(1000L)
             }
         }
-        viewModelScope.launch{
-            myFlow1.collect{
+        viewModelScope.launch {
+            myFlow1.collect {
                 Log.e("MYTAG", "consumed: $it")
             }
         }
     }
 
-    private fun backPressureDemo2(){
+    private fun backPressureDemo2() {
         //By default kotlin flow handle the backpressure
         //This is normal example for consumer producer sample
 
@@ -67,9 +68,9 @@ class MainViewModel : ViewModel() {
 
         //flow producer wait until consumer successful consumed that value and after that producer try to producing that data again
 
-        val myFlow1 = flow<Int>{
+        val myFlow1 = flow<Int> {
 
-            for (i in 1..10){
+            for (i in 1..10) {
                 Log.e("MYTAG", "producer: $i")
                 emit(i)
                 delay(1000L)
@@ -77,15 +78,15 @@ class MainViewModel : ViewModel() {
 
         }
 
-        viewModelScope.launch{
-            myFlow1.collect{
+        viewModelScope.launch {
+            myFlow1.collect {
                 Log.e("MYTAG", "consumed: $it")
                 delay(2000L)
             }
         }
     }
 
-    private fun backPressureDemo3(){
+    private fun backPressureDemo3() {
         //But there can be some situations where we need to get the flow without
         //waiting for the producer.
 
@@ -116,16 +117,16 @@ class MainViewModel : ViewModel() {
         2023-01-08 16:47:48.328 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 9
         2023-01-08 16:47:50.330 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 10*/
 
-        val myFlow1 = flow<Int>{
+        val myFlow1 = flow<Int> {
 
-            for (i in 1..10){
+            for (i in 1..10) {
                 Log.e("MYTAG", "producer: $i")
                 emit(i)
                 delay(1000L)
             }
         }
-        viewModelScope.launch{
-            myFlow1.buffer().collect{
+        viewModelScope.launch {
+            myFlow1.buffer().collect {
                 delay(2000L)
                 Log.e("MYTAG", "consumed: $it")
             }
@@ -133,7 +134,7 @@ class MainViewModel : ViewModel() {
     }
 
 
-    private fun backPressureDemo4(){
+    private fun backPressureDemo4() {
         //if want get the latest value of producer produced
         //we can use collectLatest{} operator
         //to display current score of a game.
@@ -150,20 +151,66 @@ class MainViewModel : ViewModel() {
         2023-01-08 16:54:28.810 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 10
         2023-01-08 16:54:30.815 31004-31004/com.chami.flowapisampleapplication E/MYTAG: consumed: 10*/
 
-        val myFlow1 = flow<Int>{
+        val myFlow1 = flow<Int> {
 
-            for (i in 1..10){
+            for (i in 1..10) {
                 Log.e("MYTAG", "producer: $i")
                 emit(i)
                 delay(1000L)
             }
         }
-        viewModelScope.launch{
-            myFlow1.collectLatest{
+        viewModelScope.launch {
+            myFlow1.collectLatest {
                 delay(2000L)
                 Log.e("MYTAG", "consumed: $it")
             }
         }
+    }
+
+
+    private fun mapOperatorDemo() {
+        //we can change the flow of values using map operator
+
+/*        2023-01-08 21:24:00.498 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 1
+        2023-01-08 21:24:00.499 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 1
+        2023-01-08 21:24:01.501 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 2
+        2023-01-08 21:24:01.501 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 2
+        2023-01-08 21:24:02.503 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 3
+        2023-01-08 21:24:02.503 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 3
+        2023-01-08 21:24:03.505 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 4
+        2023-01-08 21:24:03.506 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 4
+        2023-01-08 21:24:04.509 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 5
+        2023-01-08 21:24:04.509 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 5
+        2023-01-08 21:24:05.511 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 6
+        2023-01-08 21:24:05.511 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 6
+        2023-01-08 21:24:06.513 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 7
+        2023-01-08 21:24:06.513 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 7
+        2023-01-08 21:24:07.516 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 8
+        2023-01-08 21:24:07.516 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 8
+        2023-01-08 21:24:08.518 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 9
+        2023-01-08 21:24:08.518 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 9
+        2023-01-08 21:24:09.520 5102-5102/com.chami.flowapisampleapplication E/MYTAG: producer: 10
+        2023-01-08 21:24:09.520 5102-5102/com.chami.flowapisampleapplication E/MYTAG: consumed: Hello 10*/
+
+        val myFlow1 = flow<Int> {
+
+            for (i in 1..10) {
+                Log.e("MYTAG", "producer: $i")
+                emit(i)
+                delay(1000L)
+            }
+        }
+        viewModelScope.launch {
+            myFlow1.map {
+                addMessage(it)
+            }.collect {
+                Log.e("MYTAG", "consumed: $it")
+            }
+        }
+    }
+
+    fun addMessage(count : Int): String{
+        return "Hello $count"
     }
 
 }
