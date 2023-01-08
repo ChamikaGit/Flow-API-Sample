@@ -54,6 +54,7 @@ class MainComposeActivity : ComponentActivity() {
 @Composable
 fun Greeting(myFlow: Flow<Int>) {
     //collectAsState function is the consumer here
+    //every time we need to collect flow as a state in jetpack compose
     val currentValue = myFlow.collectAsState(initial = 0).value
 
     Text(text = "Hello your index is $currentValue", fontSize = 25.sp)
