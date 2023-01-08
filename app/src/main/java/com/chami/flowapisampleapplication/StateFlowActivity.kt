@@ -6,6 +6,10 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.chami.flowapisampleapplication.viewmodel.StateFlowViewModel
+import com.chami.flowapisampleapplication.viewmodel.StateFlowViewModelFactory
+import kotlinx.coroutines.flow.collect
 
 class StateFlowActivity : AppCompatActivity() {
 
@@ -29,8 +33,16 @@ class StateFlowActivity : AppCompatActivity() {
         stateFlowViewModel =
             ViewModelProvider(this, stateFlowViewModelFactory)[StateFlowViewModel::class.java]
 
-        stateFlowViewModel.total.observe(this) {
-            tvNumber.text = it.toString()
+//        stateFlowViewModel.total.observe(this) {
+//            tvNumber.text = it.toString()
+//        }
+
+        //flowTotal.collect is act the consumer here
+        //
+        lifecycleScope.launchWhenCreated {
+            stateFlowViewModel.flowTotal.collect{
+                tvNumber.text = it.toString()
+            }
         }
 
         btnUpdate.setOnClickListener {

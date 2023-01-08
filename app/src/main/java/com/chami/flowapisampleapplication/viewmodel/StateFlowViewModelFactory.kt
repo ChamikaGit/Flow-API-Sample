@@ -1,4 +1,4 @@
-package com.chami.flowapisampleapplication
+package com.chami.flowapisampleapplication.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
