@@ -14,6 +14,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chami.flowapisampleapplication.ui.theme.FlowAPISampleApplicationTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +34,9 @@ class MainComposeActivity : ComponentActivity() {
         **/
 
         setContent {
+            //android code of initialize the view-model much easier and code is concise
+            val viewModel = viewModel<MainViewModel>()
+
             FlowAPISampleApplicationTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -43,7 +48,7 @@ class MainComposeActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Greeting(myFlow)
+                        Greeting(viewModel.myFlow)
                     }
 
                 }

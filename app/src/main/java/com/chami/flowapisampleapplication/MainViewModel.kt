@@ -13,6 +13,4 @@ class MainViewModel : ViewModel() {
         }
     }
 
-
-    
 }
