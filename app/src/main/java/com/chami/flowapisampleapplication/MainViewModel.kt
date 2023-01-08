@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
@@ -17,7 +18,7 @@ class MainViewModel : ViewModel() {
     }
 
     init {
-        backPressureDemo2()
+        backPressureDemo3()
     }
 
 
@@ -79,6 +80,53 @@ class MainViewModel : ViewModel() {
             myFlow1.collect{
                 Log.e("MYTAG", "consumed: $it")
                 delay(2000L)
+            }
+        }
+    }
+
+    private fun backPressureDemo3(){
+        //But there can be some situations where we need to get the flow without
+        //waiting for the producer.
+
+        //Think about the situation where we are getting live data from some online server.
+        //to avoid producer waiting for consumer,we can use buffer operator
+
+        //using Buffer operator run on separate coroutine block so this producer and consumer work can be run
+        //on parallel(concurrently).
+
+/*        2023-01-08 16:47:30.309 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 1
+        2023-01-08 16:47:31.312 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 2
+        2023-01-08 16:47:32.312 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 1
+        2023-01-08 16:47:32.313 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 3
+        2023-01-08 16:47:33.315 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 4
+        2023-01-08 16:47:34.315 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 2
+        2023-01-08 16:47:34.316 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 5
+        2023-01-08 16:47:35.317 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 6
+        2023-01-08 16:47:36.316 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 3
+        2023-01-08 16:47:36.318 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 7
+        2023-01-08 16:47:37.321 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 8
+        2023-01-08 16:47:38.318 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 4
+        2023-01-08 16:47:38.322 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 9
+        2023-01-08 16:47:39.323 30883-30883/com.chami.flowapisampleapplication E/MYTAG: producer: 10
+        2023-01-08 16:47:40.321 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 5
+        2023-01-08 16:47:42.324 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 6
+        2023-01-08 16:47:44.326 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 7
+        2023-01-08 16:47:46.327 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 8
+        2023-01-08 16:47:48.328 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 9
+        2023-01-08 16:47:50.330 30883-30883/com.chami.flowapisampleapplication E/MYTAG: consumed: 10*/
+
+        val myFlow1 = flow<Int>{
+
+            for (i in 1..10){
+                Log.e("MYTAG", "producer: $i")
+                emit(i)
+                delay(1000L)
+            }
+        }
+        viewModelScope.launch{
+            myFlow1.buffer().collect{
+                delay(2000L)
+                Log.e("MYTAG", "consumed: $it")
             }
         }
     }
