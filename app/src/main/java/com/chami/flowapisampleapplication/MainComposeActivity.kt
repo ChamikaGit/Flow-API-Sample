@@ -23,12 +23,13 @@ class MainComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val myFlow = flow<Int> {
+        /**val myFlow = flow<Int> {
             for (i in 1..100) {
                 emit(i)
                 delay(1000L)
             }
         }
+        **/
 
         setContent {
             FlowAPISampleApplicationTheme {
