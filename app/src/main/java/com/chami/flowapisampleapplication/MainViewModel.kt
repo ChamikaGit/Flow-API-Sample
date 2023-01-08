@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
@@ -20,7 +17,7 @@ class MainViewModel : ViewModel() {
     }
 
     init {
-        mapOperatorDemo()
+        filterOperatorDemo()
     }
 
 
@@ -209,8 +206,31 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun addMessage(count : Int): String{
+    private fun addMessage(count: Int): String {
         return "Hello $count"
+    }
+
+    private fun filterOperatorDemo() {
+        //we can filter the flow of values to given predicate.
+        //if use more than one operator we say operator chaining.
+        val myFlow1 = flow<Int> {
+
+            for (i in 1..10) {
+                Log.e("MYTAG", "producer: $i")
+                emit(i)
+                delay(1000L)
+            }
+        }
+        viewModelScope.launch {
+            myFlow1
+                .filter { count ->
+                    count % 3 == 0
+                }.map {
+                    addMessage(it)
+                }.collect {
+                    Log.e("MYTAG", "consumed: $it")
+                }
+        }
     }
 
 }
