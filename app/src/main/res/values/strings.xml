@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Flow API Sample Application</string>
+    <string name="title_activity_main_compose">MainComposeActivity</string>
+</resources>
