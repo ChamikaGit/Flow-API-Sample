@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
@@ -18,7 +19,7 @@ class MainViewModel : ViewModel() {
     }
 
     init {
-        backPressureDemo3()
+        backPressureDemo4()
     }
 
 
@@ -125,6 +126,39 @@ class MainViewModel : ViewModel() {
         }
         viewModelScope.launch{
             myFlow1.buffer().collect{
+                delay(2000L)
+                Log.e("MYTAG", "consumed: $it")
+            }
+        }
+    }
+
+
+    private fun backPressureDemo4(){
+        //if want get the latest value of producer produced
+        //we can use collectLatest{} operator
+
+/*        2023-01-08 16:54:19.770 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 1
+        2023-01-08 16:54:20.775 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 2
+        2023-01-08 16:54:21.779 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 3
+        2023-01-08 16:54:22.783 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 4
+        2023-01-08 16:54:23.789 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 5
+        2023-01-08 16:54:24.793 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 6
+        2023-01-08 16:54:25.798 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 7
+        2023-01-08 16:54:26.803 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 8
+        2023-01-08 16:54:27.808 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 9
+        2023-01-08 16:54:28.810 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 10
+        2023-01-08 16:54:30.815 31004-31004/com.chami.flowapisampleapplication E/MYTAG: consumed: 10*/
+
+        val myFlow1 = flow<Int>{
+
+            for (i in 1..10){
+                Log.e("MYTAG", "producer: $i")
+                emit(i)
+                delay(1000L)
+            }
+        }
+        viewModelScope.launch{
+            myFlow1.collectLatest{
                 delay(2000L)
                 Log.e("MYTAG", "consumed: $it")
             }
