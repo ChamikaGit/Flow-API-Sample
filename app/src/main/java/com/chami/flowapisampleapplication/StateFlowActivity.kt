@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.chami.flowapisampleapplication.viewmodel.StateFlowViewModel
 import com.chami.flowapisampleapplication.viewmodel.StateFlowViewModelFactory
-import kotlinx.coroutines.flow.collect
 
 class StateFlowActivity : AppCompatActivity() {
 
@@ -29,7 +29,7 @@ class StateFlowActivity : AppCompatActivity() {
         tvNumber = findViewById(R.id.tvNumber)
         btnUpdate = findViewById(R.id.btnUpdate)
 
-        stateFlowViewModelFactory = StateFlowViewModelFactory(125,application)
+        stateFlowViewModelFactory = StateFlowViewModelFactory(125, application)
         stateFlowViewModel =
             ViewModelProvider(this, stateFlowViewModelFactory)[StateFlowViewModel::class.java]
 
@@ -40,8 +40,15 @@ class StateFlowActivity : AppCompatActivity() {
         //flowTotal.collect is act the consumer here
         //
         lifecycleScope.launchWhenCreated {
-            stateFlowViewModel.flowTotal.collect{
+            stateFlowViewModel.flowTotal.collect {
                 tvNumber.text = it.toString()
+            }
+        }
+
+        //only used to get update for one time like event
+        lifecycleScope.launchWhenCreated {
+            stateFlowViewModel.message.collect {
+                Toast.makeText(this@StateFlowActivity, it, Toast.LENGTH_SHORT).show()
             }
         }
 
