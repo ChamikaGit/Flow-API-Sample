@@ -136,6 +136,7 @@ class MainViewModel : ViewModel() {
     private fun backPressureDemo4(){
         //if want get the latest value of producer produced
         //we can use collectLatest{} operator
+        //to display current score of a game.
 
 /*        2023-01-08 16:54:19.770 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 1
         2023-01-08 16:54:20.775 31004-31004/com.chami.flowapisampleapplication E/MYTAG: producer: 2
